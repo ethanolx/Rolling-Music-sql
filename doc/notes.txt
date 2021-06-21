@@ -1,0 +1,88 @@
+# STATE CODES
+# ===========
+
+Brazil "state"
+['SP' 'RJ' 'DF']
+S\xe3o Paulo
+Rio de Janeiro
+Distrito Federal
+
+Canada "province"
+['QC' 'AB' 'BC' 'ON' 'NS' 'MB' 'NT' 'YT' 'NB' 'NL' 'NU' 'SK']
+Quebec
+Alberta
+British Columbia
+Ontario
+Nova Scotia
+Manitoba
+Northwest Territories
+Yukon
+New Brunswick
+Newfoundland and Labrador
+Nunavut
+Saskatchewan
+
+US "state"
+['CA' 'WA' 'NY' 'NV' 'FL' 'MA' 'IL' 'WI' 'TX' 'AZ' 'UT' 'OK' 'WY' 'DE' 'AL']
+California
+Washington
+New York
+Nevada
+Florida
+Massachusetts
+Illinois
+Wisconsin
+Texas
+Arizona
+Utah
+Oklahoma
+Wyoming
+Delaware
+Alabama
+
+France "region"
+['BA' 'AQ' 'IL' 'MI' 'LO']
+Normandy
+Nouvelle-Aquitaine (Aquitaine)
+Île-de-France
+Occitanie (Midi-Pyrénées)
+Grand Est (Lorraine)
+
+Italy "region"
+['RM' 'VEN' 'BAS' 'CAM' 'SAR' 'PIE' 'CAL']
+Lazio
+Veneto
+Basilicata
+Campania
+Sardinia
+Piedmont
+Calabria
+
+Netherlands "province"
+['VV']
+North Holland
+
+Australia "state"
+['NSW']
+New South Wales
+
+UK "county"
+['SU' 'ST' 'RO' 'FL' 'AG' 'YK' 'SH' 'KR' 'GL']
+Sutherland
+Stirling
+Roxburgh
+Flintshire
+Anglesey
+Yorkshire
+Shetland
+Kinross
+Gloucestershire
+
+
+# CALLING CODES
+# =============
+'Canada': '1',
+'Italy': '39',
+'United States': '1',
+'France': '33',
+'United Kingdom': '44'
