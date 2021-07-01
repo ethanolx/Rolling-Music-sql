@@ -139,47 +139,71 @@ def clean_customer_csv(out: str):
             ('United Kingdom', 'FL', 'Flintshire')
         ])
 
-    # Attach calling codes for phone numbers without
-    # Calling codes are based on the Country column
-    def attach_calling_codes(df: pd.DataFrame, calling_codes: Dict[str, int]):
+    # Strip calling codes for phone and fax numbers
+    def strip_country_codes(df: pd.DataFrame, col: str):
         df_copy = df.copy()
-        for i in df_copy[~df_copy['Phone'].str.contains('+', regex=False, na=True)].index:
-            phone = df_copy.loc[i, 'Phone']
-            country = df_copy.loc[i, 'Country']
-            df_copy.loc[i, 'Phone'] = '+' + \
-                str(calling_codes[country]) + ' ' + phone
+        for i in df_copy[df_copy[col].str.contains('+', regex=False, na=False)].index:
+            num = df_copy.loc[i, col]
+            num_partitioned = num.split(sep=' ')
+            num_partitioned.pop(0)
+            df_copy.loc[i, col] = ' '.join(num_partitioned)
         return df_copy
 
-    df = attach_calling_codes(
-        df=df,
-        calling_codes={
-            'Canada': 1,
-            'Italy': 39,
-            'United States': 1,
-            'France': 33,
-            'United Kingdom': 44
-        })
+    df = strip_country_codes(df=df, col='Phone')
+    df = strip_country_codes(df=df, col='Fax')
+
+    # Format french and italian phone numbers
+    def format_france_italy_phones(df: pd.DataFrame):
+        df_copy = df.copy()
+        french_italian_phones = df_copy[(df_copy['Country'] == 'France') | (
+            df_copy['Country'] == 'Italy')]
+        french_phones = df_copy[df_copy['Country'] == 'France']
+        italian_phones = df_copy[df_copy['Country'] == 'Italy']
+        for i in french_italian_phones.index:
+            original = df_copy.loc[i, 'Phone']
+            df_copy.loc[i, 'Phone'] = original.replace(
+                '(', '').replace(')', '').replace(' ', '')
+        for i in french_phones.index:
+            original_fr = df_copy.loc[i, 'Phone']
+            df_copy.loc[i, 'Phone'] = '(' + original_fr[:2] + ') ' + original_fr[2:4] + \
+                ' ' + original_fr[4:6] + ' ' + \
+                original_fr[6:8] + ' ' + original_fr[8:]
+        for i in italian_phones.index:
+            original_it = df_copy.loc[i, 'Phone']
+            df_copy.loc[i, 'Phone'] = '(' + original_it[:2] + ') ' + \
+                original_it[2:6] + ' ' + original_it[6:]
+        return df_copy
+
+    df = format_france_italy_phones(df)
 
     # Change data type of SupportRepId from string to integer
     df['SupportRepId'] = df['SupportRepId'].astype(int)
+
+    # Rectify encoding
+    df.loc['5', 'FirstName'] = 'Franti\u0161ek'
+    df.loc['49', 'FirstName'] = 'Stanis\u0142aw'
+    df.loc['49', 'Email'] = 'stanis\u0142aw.wójcik@wp.pl'
+
+    df.index = df.index.astype(int)
 
     # Save cleaned data as a new csv file
     df.to_csv(
         path_or_buf=out,
         sep=';',
-        encoding='utf-16')
+        encoding='utf-16'
+    )
 
 
-OUTPUT_FILE = './CleanCustomer.csv'
+OUTPUT_FILE = './out/Customer_cleaned.csv'
 
 clean_customer_csv(OUTPUT_FILE)
 
 # Check data
-new_df = pd.read_csv(
-    filepath_or_buffer=OUTPUT_FILE,
-    sep=';',
-    index_col=0,
-    encoding='utf-16'
-)
+# new_df = pd.read_csv(
+#     filepath_or_buffer=OUTPUT_FILE,
+#     sep=';',
+#     index_col=0,
+#     encoding='utf-16'
+# )
 
-print(new_df.head())
+# print(new_df.head())
