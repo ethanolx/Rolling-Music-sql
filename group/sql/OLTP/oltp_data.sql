@@ -21,21 +21,15 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
 -- Artist Table
-DECLARE @Artist NVARCHAR(MAX) =
-	BulkColumn
-FROM
-	OPENROWSET(BULK ''' + @script_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
+DECLARE @Artist NVARCHAR(MAX);
+SELECT @Artist = BulkColumn FROM OPENROWSET(BULK ''' + @script_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
 
-INSERT INTO Artist
-SELECT * FROM OPENJSON(@Artist, ''$'')
-WITH (
-	ArtistId	int				''$.ArtistId'',
-	[Name]		nvarchar(120)	''$.Name''
+INSERT INTO Artist SELECT * FROM OPENJSON(@Artist, ''$'') WITH (
+	ArtistId	INT				''$.ArtistId'',
+	[Name]		NVARCHAR(120)	''$.Name''
 );
-GO
 
 -- Album Table
 BULK INSERT Album
@@ -50,7 +44,6 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
 -- MediaType Table
 BULK INSERT MediaType
@@ -65,21 +58,18 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
 -- Genre Table
-DECLARE @Genre NVARCHAR(MAX) = 
-	BulkColumn
-FROM
-	OPENROWSET(BULK ''' + @script_directory + 'Genre.json'', SINGLE_NCLOB) JSON;
+DECLARE @Genre NVARCHAR(MAX);
+SELECT @Genre = BulkColumn FROM OPENROWSET(BULK ''' + @script_directory + 'Genre.json'', SINGLE_NCLOB) JSON;
 
 INSERT INTO Genre
-SELECT * FROM OpenJSON(@Genre, ''$'')
+SELECT * FROM OPENJSON(@Genre, ''$'')
 WITH (
 	GenreId int ''$.GenreId'',
 	Name nvarchar(60) ''$.Name''
 );
-GO
+
 
 -- Track Table
 BULK INSERT Track
@@ -94,7 +84,6 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
 -- InvoiceLine Table
 BULK INSERT InvoiceLine
@@ -109,7 +98,7 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
+
 
 --   tables that require cleaning   --
 
@@ -119,10 +108,9 @@ GO
 
 CREATE TABLE Playlist_temp (
 	PlaylistId	INT				NOT NULL,	
-	[Name]		NVARCHAR(120)	NOT NULL,
-	PRIMARY KEY (PlaylistId)
+	[Name]		NVARCHAR(120)	NOT NULL
 );
-GO
+
 
 -- load data into temporary table
 
@@ -138,7 +126,6 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
 -- remove duplicates
 
@@ -174,19 +161,23 @@ FROM
 	Playlist_temp;
 
 -- drop temporary Playlist table
+
 DROP TABLE Playlist_temp;
 
 
 ------------- PlaylistTrack ---------------
 
--- Create temporary table
+-- create temporary table
+
+USE tempdb;
+
 CREATE TABLE PlaylistTrack_temp (
 	PlaylistId	INT		NOT NULL,
 	TrackId		INT		NOT NULL
 );
---GO
 
--- Insert records into PlaylistTrack
+-- insert records into PlaylistTrack
+
 BULK INSERT PlaylistTrack_temp
 FROM ''' + @script_directory + 'PlaylistTrack.csv''
 WITH
@@ -199,55 +190,65 @@ WITH
     ROWTERMINATOR = ''\n'',
     TABLOCK
 )
---GO
 
--- Update PlaylistId according to the new Playlist table
-UPDATE PlaylistTrack_temp
-SET PlaylistId = 
-	CASE PlaylistId
-		WHEN 8 THEN 1
-		WHEN 7 THEN 2
-		WHEN 10 THEN 3
-		WHEN 6 THEN 4
-		WHEN 9 THEN 6
-		WHEN 11 THEN 7
-		WHEN 12 THEN 8
-		WHEN 13 THEN 9
-		WHEN 14 THEN 10
-		WHEN 15 THEN 11
-		WHEN 16 THEN 12
-		WHEN 17 THEN 13
-		WHEN 18 THEN 14
-	END
-WHERE PlaylistId IN (8, 7, 10, 6, 9, 11, 12, 13, 14, 15, 16, 17, 18);
---GO
+-- update PlaylistId according to the new Playlist table
 
--- Remove duplicated values
+UPDATE
+	PlaylistTrack_temp
+SET
+	PlaylistId = 
+		CASE PlaylistId
+			WHEN 8 THEN 1
+			WHEN 7 THEN 2
+			WHEN 10 THEN 3
+			WHEN 6 THEN 4
+			WHEN 9 THEN 6
+			WHEN 11 THEN 7
+			WHEN 12 THEN 8
+			WHEN 13 THEN 9
+			WHEN 14 THEN 10
+			WHEN 15 THEN 11
+			WHEN 16 THEN 12
+			WHEN 17 THEN 13
+			WHEN 18 THEN 14
+		END
+WHERE
+	PlaylistId IN (8, 7, 10, 6, 9, 11, 12, 13, 14, 15, 16, 17, 18);
+
+-- remove duplicates
+
 WITH ctept AS
-(SELECT *, ROW_NUMBER() OVER (PARTITION BY PlaylistId, TrackId ORDER BY PlaylistId, TrackId) Row_No FROM PlaylistTrack_temp)
-DELETE FROM ctept
-WHERE Row_No > 1;
---GO
+	(SELECT
+		*,
+		ROW_NUMBER() OVER (PARTITION BY PlaylistId, TrackId ORDER BY PlaylistId, TrackId) AS Row_No
+	FROM
+		PlaylistTrack_temp)
+DELETE FROM
+	ctept
+WHERE
+	Row_No > 1;
 
--- Insert cleaned records into actual PlaylistTrack table
-INSERT INTO PlaylistTrack SELECT * FROM PlaylistTrack_temp;
---GO
+-- insert cleaned records into actual PlaylistTrack table
 
--- Drop temporary PlaylistTrack table
-DROP TABLE PlaylistTrack_temp;
---GO
+INSERT INTO MusicStoreFYRE..PlaylistTrack SELECT * FROM tempdb..PlaylistTrack_temp;
+
+-- drop temporary PlaylistTrack table
+
+DROP TABLE tempdb..PlaylistTrack_temp;
+
 
 ------------- Employee ---------------
 
--- Create temporary table
+-- create temporary Employee table
+
+USE tempdb;
+
 CREATE TABLE Employee_temp (
 	EmployeeId	INT				NOT NULL,
 	LastName	NVARCHAR(20)	NOT NULL,
 	FirstName	NVARCHAR(20)	NOT NULL,
 	Title		NVARCHAR(30)	NOT NULL,
-	ReportsTo	INT				NULL
-		CONSTRAINT Fk_ReportsTo
-		REFERENCES Employee_temp(EmployeeId) ON DELETE NO ACTION,
+	ReportsTo	INT				NULL,
 	BirthDate	DATETIME		NOT NULL,
 	HireDate	DATETIME		NOT NULL,
 	[Address]	NVARCHAR(70)	NOT NULL,
@@ -258,14 +259,10 @@ CREATE TABLE Employee_temp (
 	Phone		NVARCHAR(24)	NOT NULL,
 	Fax			NVARCHAR(24)	NOT NULL,
 	Email		NVARCHAR(60)	NOT NULL,
-	PRIMARY KEY (EmployeeId),
-    CONSTRAINT InvalidBirthYear_temp CHECK (YEAR(BirthDate) BETWEEN 1900 AND YEAR(GETDATE()) - 10), -- Customer at least 10 y.o.
-    CONSTRAINT InvalidHireDate_temp CHECK (HireDate > BirthDate), -- Hired after born
-    CONSTRAINT InvalidEmpEmail_temp CHECK (Email LIKE ''%_@_%'') -- Valid email format, at least 3 characters
 );
---GO
 
--- Insert Data into Employee table
+-- insert data into Employee table
+
 BULK INSERT Employee_temp
 FROM ''' + @script_directory + 'Employee.csv''
 WITH (
@@ -277,28 +274,33 @@ WITH (
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
--- Correcting Data Inconsistency in Phone and Fax
-UPDATE Employee_temp
-SET Phone = CONCAT(''+'', Phone), Fax = CONCAT(''+'', Fax)
-WHERE EmployeeId = 5
+-- correct data inconsistency in Phone and Fax
 
--- Insert cleaned records into actual Employee table
-INSERT INTO Employee SELECT * FROM Employee_temp;
---GO
+UPDATE
+	Employee_temp
+SET
+	Phone = CONCAT(''+'', Phone),
+	Fax = CONCAT(''+'', Fax)
+WHERE
+	EmployeeId = 5
 
--- Drop temporary Employee table
-ALTER TABLE Employee_temp
-DROP CONSTRAINT FK_ReportsTo
+-- insert cleaned records into actual Employee table
 
-DROP TABLE Employee_temp;
---GO
+INSERT INTO MusicStoreFYRE..Employee SELECT * FROM tempdb..Employee_temp;
+
+-- drop temporary Employee table
+
+DROP TABLE tempdb..Employee_temp;
+
 
 ------------- Customer ---------------
 
--- Create temporary table
-CREATE TABLE Customer_tmp (
+-- create temporary Customer table
+
+USE tempdb;
+
+CREATE TABLE Customer_temp (
 	CustomerId	INT,
 	FirstName	NVARCHAR(20),
 	LastName	NVARCHAR(20),
@@ -313,13 +315,12 @@ CREATE TABLE Customer_tmp (
 	Email		NVARCHAR(60),
 	SupportRepId	INT
 );
---GO
 
--- Insert Data into Customer table
-BULK INSERT
-	Customer_tmp
-FROM
-	''' + @script_directory + 'Customer.csv''
+
+-- insert data into temporary Customer table
+
+BULK INSERT Customer_temp
+FROM ''' + @script_directory + 'Customer.csv''
 WITH (
 	FIELDTERMINATOR = ''|'',
     FORMAT = ''CSV'', 
@@ -329,11 +330,11 @@ WITH (
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
-GO
 
--- Insert cleaned records into actual Customer table
+-- insert cleaned records into actual Customer table
+
 INSERT INTO
-	Customer 
+	MusicStoreFYRE..Customer
 SELECT
 	CustomerId,
 	FirstName,
@@ -349,11 +350,13 @@ SELECT
 	Email,
 	SupportRepId
 FROM
-	Customer_tmp;
+	tempdb..Customer_temp;
 
 
--- Drop temporary Customer table
-DROP TABLE Customer_tmp;
+-- drop temporary Customer table
+
+DROP TABLE tempdb..Customer_temp;
 ';
 
-EXEC (@sql)
+EXEC (@sql);
+GO
