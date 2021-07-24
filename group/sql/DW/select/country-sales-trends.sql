@@ -31,20 +31,20 @@ DECLARE @max_year CHAR(4) = CONVERT(CHAR(4), (SELECT ISNULL(IIF(@custom_max_year
 EXEC ('
 	SELECT
 		[Country],
-		[Sales (' + @min_year + ')],
-		[Sales (' + @max_year + ')],
+		[Earlier Sales] AS [Sales (' + @min_year + ')],
+		[Later Sales] AS [Sales (' + @max_year + ')],
 		[Growth]
 	FROM
 		(SELECT
 			*,
-			[Sales (' + @max_year + ')] - [Sales (' + @min_year + ')] AS [Growth],
-			RANK() OVER (ORDER BY [Sales (' + @max_year + ')] - [Sales (' + @min_year + ')] ASC) AS [Asc Rank],
-			RANK() OVER (ORDER BY [Sales (' + @max_year + ')] - [Sales (' + @min_year + ')] DESC) AS [Desc Rank]
+			[Later Sales] - [Earlier Sales] AS [Growth],
+			RANK() OVER (ORDER BY [Later Sales] - [Earlier Sales] ASC) AS [Asc Rank],
+			RANK() OVER (ORDER BY [Later Sales] - [Earlier Sales] DESC) AS [Desc Rank]
 		FROM
 			(SELECT
 				ISNULL(Latest_Sales.[Country], Earliest_Sales.[Country]) AS [Country],
-				ISNULL(Earliest_Sales.[Sales], 0.0) AS [Sales (' + @min_year + ')],
-				ISNULL(Latest_Sales.[Sales], 0.0) AS [Sales (' + @max_year + ')]
+				ISNULL(Earliest_Sales.[Sales], 0) AS [Earlier Sales],
+				ISNULL(Latest_Sales.[Sales], 0) AS [Later Sales]
 			FROM
 				(SELECT
 					*
