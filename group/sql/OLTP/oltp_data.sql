@@ -1,8 +1,32 @@
+--  File Name:
+--      oltp_data.sql
+
+--  Run Order:
+--      After:  oltp_init.sql
+
+--	Keywords:
+--      Load Data, CSV Files, OLTP Database
+
+--	Description:
+--      Load Data from CSV files into
+--      1)  MusicStoreFYRE..Invoice
+--      2)  MusicStoreFYRE..Artist
+--      3)  MusicStoreFYRE..Album
+--      4)  MusicStoreFYRE..MediaType
+--      5)  MusicStoreFYRE..Genre
+--      6)  MusicStoreFYRE..Track
+--      7)  MusicStoreFYRE..InvoiceLine
+--      8)  MusicStoreFYRE..Playlist
+--      9)  MusicStoreFYRE..PlaylistTrack
+--      10) MusicStoreFYRE..Employee
+--      11) MusicStoreFYRE..Customer
+
+
 USE MusicStoreFYRE;
 GO
 
 DECLARE @script_directory VARCHAR(100);
-SET @script_directory = 'C:\Users\ethanol\Documents\SP\Current\Data Engineering (DENG)\CA2\data\';
+SET @script_directory = 'C:\\data\';
 
 DECLARE @sql VARCHAR(MAX) = '
 
@@ -14,7 +38,7 @@ FROM ''' + @script_directory + 'Invoice.csv''
 WITH
 (
 	FIELDTERMINATOR = '','',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -24,7 +48,7 @@ WITH
 
 -- Artist Table
 DECLARE @Artist NVARCHAR(MAX);
-SELECT @Artist = BulkColumn FROM OPENROWSET(BULK ''' + @script_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
+SELECT @Artist = BULKCOLUMN FROM OPENROWSET(BULK ''' + @script_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
 
 INSERT INTO Artist SELECT * FROM OPENJSON(@Artist, ''$'') WITH (
 	ArtistId	INT				''$.ArtistId'',
@@ -37,7 +61,7 @@ FROM ''' + @script_directory + 'Album.csv''
 WITH
 (
     FIELDTERMINATOR = ''|'',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -51,7 +75,7 @@ FROM ''' + @script_directory + 'MediaType.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -61,13 +85,13 @@ WITH
 
 -- Genre Table
 DECLARE @Genre NVARCHAR(MAX);
-SELECT @Genre = BulkColumn FROM OPENROWSET(BULK ''' + @script_directory + 'Genre.json'', SINGLE_NCLOB) JSON;
+SELECT @Genre = BULKCOLUMN FROM OPENROWSET(BULK ''' + @script_directory + 'Genre.json'', SINGLE_NCLOB) JSON;
 
 INSERT INTO Genre
 SELECT * FROM OPENJSON(@Genre, ''$'')
 WITH (
-	GenreId int ''$.GenreId'',
-	Name nvarchar(60) ''$.Name''
+	GenreId INT ''$.GenreId'',
+	Name NVARCHAR(60) ''$.Name''
 );
 
 
@@ -77,7 +101,7 @@ FROM ''' + @script_directory + 'Track.csv''
 WITH
 (
 	FIELDTERMINATOR = ''|'',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''0X0FF2'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -91,7 +115,7 @@ FROM ''' + @script_directory + 'InvoiceLine.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -107,7 +131,7 @@ WITH
 -- create temporary table
 
 CREATE TABLE Playlist_temp (
-	PlaylistId	INT				NOT NULL,	
+	PlaylistId	INT				NOT NULL,
 	[Name]		NVARCHAR(120)	NOT NULL
 );
 
@@ -119,7 +143,7 @@ FROM ''' + @script_directory + 'Playlist.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -129,7 +153,7 @@ WITH
 
 -- remove duplicates
 
-WITH cte AS 
+WITH cte AS
 	(SELECT
 		*,
 		ROW_NUMBER() OVER (PARTITION BY Name ORDER BY PlaylistId) AS Row_No
@@ -183,7 +207,7 @@ FROM ''' + @script_directory + 'PlaylistTrack.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -196,7 +220,7 @@ WITH
 UPDATE
 	PlaylistTrack_temp
 SET
-	PlaylistId = 
+	PlaylistId =
 		CASE PlaylistId
 			WHEN 8 THEN 1
 			WHEN 7 THEN 2
@@ -249,11 +273,11 @@ CREATE TABLE Employee_temp (
 	FirstName	NVARCHAR(20)	NOT NULL,
 	Title		NVARCHAR(30)	NOT NULL,
 	ReportsTo	INT				NULL,
-	BirthDate	DATETIME		NOT NULL,
-	HireDate	DATETIME		NOT NULL,
+	BirthDate	DATE			NOT NULL,
+	HireDate	DATE			NOT NULL,
 	[Address]	NVARCHAR(70)	NOT NULL,
 	City		NVARCHAR(40)	NOT NULL,
-	[State]		NVARCHAR(40)	NOT NULL,	
+	[State]		NVARCHAR(40)	NOT NULL,
 	Country		NVARCHAR(40)	NOT NULL,
 	PostalCode	NVARCHAR(10)	NOT NULL,
 	Phone		NVARCHAR(24)	NOT NULL,
@@ -267,7 +291,7 @@ BULK INSERT Employee_temp
 FROM ''' + @script_directory + 'Employee.csv''
 WITH (
 	FIELDTERMINATOR = '','',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',
@@ -323,7 +347,7 @@ BULK INSERT Customer_temp
 FROM ''' + @script_directory + 'Customer.csv''
 WITH (
 	FIELDTERMINATOR = ''|'',
-    FORMAT = ''CSV'', 
+    FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
 	DATAFILETYPE = ''widechar'',

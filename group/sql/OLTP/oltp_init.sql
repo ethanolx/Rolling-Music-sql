@@ -6,6 +6,19 @@ WARNING:
 	- This is a potentially irreversible action
 */
 
+--  File Name:
+--      oltp_init.sql
+
+--  Run Order:
+--      Before: oltp_data.sql
+
+--	Keywords:
+--      Create Tables, OLTP Database
+
+--	Description:
+--      Create Tables with constraints for MusicStoreFYRE
+
+
 -- Database Initialisation --
 DROP DATABASE IF EXISTS MusicStoreFYRE;
 GO
@@ -23,11 +36,11 @@ CREATE TABLE Employee (
 	FirstName	NVARCHAR(20)	NOT NULL,
 	Title		NVARCHAR(30)	NOT NULL,
 	ReportsTo	INT				NULL,
-	BirthDate	DATETIME		NOT NULL,
-	HireDate	DATETIME		NOT NULL,
+	BirthDate	DATE			NOT NULL,
+	HireDate	DATE			NOT NULL,
 	[Address]	NVARCHAR(70)	NOT NULL,
 	City		NVARCHAR(40)	NOT NULL,
-	[State]		NVARCHAR(40)	NOT NULL,	
+	[State]		NVARCHAR(40)	NOT NULL,
 	Country		NVARCHAR(40)	NOT NULL,
 	PostalCode	NVARCHAR(10)	NOT NULL,
 	Phone		NVARCHAR(24)	NOT NULL,
@@ -129,7 +142,7 @@ GO
 
 -- Playlist Table --
 CREATE TABLE Playlist (
-	PlaylistId	INT				NOT NULL,	
+	PlaylistId	INT				NOT NULL,
 	[Name]		NVARCHAR(120)	NOT NULL,
 	PRIMARY KEY (PlaylistId)
 );
