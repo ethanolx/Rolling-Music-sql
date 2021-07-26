@@ -4,10 +4,10 @@
 --  Run Order:
 --      After:  oltp_init.sql
 
---	Keywords:
+--  Keywords:
 --      Load Data, CSV Files, OLTP Database
 
---	Description:
+--  Description:
 --      Load Data from CSV files into
 --      1)  MusicStoreFYRE..Invoice
 --      2)  MusicStoreFYRE..Artist
@@ -37,11 +37,11 @@ BULK INSERT Invoice
 FROM ''' + @script_directory + 'Invoice.csv''
 WITH
 (
-	FIELDTERMINATOR = '','',
+    FIELDTERMINATOR = '','',
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -51,8 +51,8 @@ DECLARE @Artist NVARCHAR(MAX);
 SELECT @Artist = BULKCOLUMN FROM OPENROWSET(BULK ''' + @script_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
 
 INSERT INTO Artist SELECT * FROM OPENJSON(@Artist, ''$'') WITH (
-	ArtistId	INT				''$.ArtistId'',
-	[Name]		NVARCHAR(120)	''$.Name''
+    ArtistId    INT             ''$.ArtistId'',
+    [Name]      NVARCHAR(120)   ''$.Name''
 );
 
 -- Album Table
@@ -64,7 +64,7 @@ WITH
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -78,7 +78,7 @@ WITH
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -90,8 +90,8 @@ SELECT @Genre = BULKCOLUMN FROM OPENROWSET(BULK ''' + @script_directory + 'Genre
 INSERT INTO Genre
 SELECT * FROM OPENJSON(@Genre, ''$'')
 WITH (
-	GenreId INT ''$.GenreId'',
-	Name NVARCHAR(60) ''$.Name''
+    GenreId INT ''$.GenreId'',
+    Name NVARCHAR(60) ''$.Name''
 );
 
 
@@ -100,11 +100,11 @@ BULK INSERT Track
 FROM ''' + @script_directory + 'Track.csv''
 WITH
 (
-	FIELDTERMINATOR = ''|'',
+    FIELDTERMINATOR = ''|'',
     FORMAT = ''CSV'',
     FIELDQUOTE = ''0X0FF2'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -118,7 +118,7 @@ WITH
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -131,8 +131,8 @@ WITH
 -- create temporary table
 
 CREATE TABLE Playlist_temp (
-	PlaylistId	INT				NOT NULL,
-	[Name]		NVARCHAR(120)	NOT NULL
+    PlaylistId  INT             NOT NULL,
+    [Name]      NVARCHAR(120)   NOT NULL
 );
 
 
@@ -146,7 +146,7 @@ WITH
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -154,35 +154,35 @@ WITH
 -- remove duplicates
 
 WITH cte AS
-	(SELECT
-		*,
-		ROW_NUMBER() OVER (PARTITION BY Name ORDER BY PlaylistId) AS Row_No
-	FROM
-		Playlist_temp)
+    (SELECT
+        *,
+        ROW_NUMBER() OVER (PARTITION BY Name ORDER BY PlaylistId) AS Row_No
+    FROM
+        Playlist_temp)
 DELETE FROM
-	cte
+    cte
 WHERE
-	Row_No > 1;
+    Row_No > 1;
 
 -- reorder PlaylistId in ascending order
 
 WITH CTE AS
-	(SELECT
-		*,
-		ROW_NUMBER() OVER (ORDER BY PlaylistId) AS RN
-	FROM Playlist_temp)
+    (SELECT
+        *,
+        ROW_NUMBER() OVER (ORDER BY PlaylistId) AS RN
+    FROM Playlist_temp)
 UPDATE
-	CTE
+    CTE
 SET PlaylistId = RN
 
 -- insert cleaned records into actual Playlist table
 
 INSERT INTO
-	Playlist
+    Playlist
 SELECT
-	*
+    *
 FROM
-	Playlist_temp;
+    Playlist_temp;
 
 -- drop temporary Playlist table
 
@@ -196,8 +196,8 @@ DROP TABLE Playlist_temp;
 USE tempdb;
 
 CREATE TABLE PlaylistTrack_temp (
-	PlaylistId	INT		NOT NULL,
-	TrackId		INT		NOT NULL
+    PlaylistId  INT     NOT NULL,
+    TrackId     INT     NOT NULL
 );
 
 -- insert records into PlaylistTrack
@@ -210,7 +210,7 @@ WITH
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 )
@@ -218,39 +218,39 @@ WITH
 -- update PlaylistId according to the new Playlist table
 
 UPDATE
-	PlaylistTrack_temp
+    PlaylistTrack_temp
 SET
-	PlaylistId =
-		CASE PlaylistId
-			WHEN 8 THEN 1
-			WHEN 7 THEN 2
-			WHEN 10 THEN 3
-			WHEN 6 THEN 4
-			WHEN 9 THEN 6
-			WHEN 11 THEN 7
-			WHEN 12 THEN 8
-			WHEN 13 THEN 9
-			WHEN 14 THEN 10
-			WHEN 15 THEN 11
-			WHEN 16 THEN 12
-			WHEN 17 THEN 13
-			WHEN 18 THEN 14
-		END
+    PlaylistId =
+        CASE PlaylistId
+            WHEN 8 THEN 1
+            WHEN 7 THEN 2
+            WHEN 10 THEN 3
+            WHEN 6 THEN 4
+            WHEN 9 THEN 6
+            WHEN 11 THEN 7
+            WHEN 12 THEN 8
+            WHEN 13 THEN 9
+            WHEN 14 THEN 10
+            WHEN 15 THEN 11
+            WHEN 16 THEN 12
+            WHEN 17 THEN 13
+            WHEN 18 THEN 14
+        END
 WHERE
-	PlaylistId IN (8, 7, 10, 6, 9, 11, 12, 13, 14, 15, 16, 17, 18);
+    PlaylistId IN (8, 7, 10, 6, 9, 11, 12, 13, 14, 15, 16, 17, 18);
 
 -- remove duplicates
 
 WITH ctept AS
-	(SELECT
-		*,
-		ROW_NUMBER() OVER (PARTITION BY PlaylistId, TrackId ORDER BY PlaylistId, TrackId) AS Row_No
-	FROM
-		PlaylistTrack_temp)
+    (SELECT
+        *,
+        ROW_NUMBER() OVER (PARTITION BY PlaylistId, TrackId ORDER BY PlaylistId, TrackId) AS Row_No
+    FROM
+        PlaylistTrack_temp)
 DELETE FROM
-	ctept
+    ctept
 WHERE
-	Row_No > 1;
+    Row_No > 1;
 
 -- insert cleaned records into actual PlaylistTrack table
 
@@ -268,21 +268,21 @@ DROP TABLE tempdb..PlaylistTrack_temp;
 USE tempdb;
 
 CREATE TABLE Employee_temp (
-	EmployeeId	INT				NOT NULL,
-	LastName	NVARCHAR(20)	NOT NULL,
-	FirstName	NVARCHAR(20)	NOT NULL,
-	Title		NVARCHAR(30)	NOT NULL,
-	ReportsTo	INT				NULL,
-	BirthDate	DATE			NOT NULL,
-	HireDate	DATE			NOT NULL,
-	[Address]	NVARCHAR(70)	NOT NULL,
-	City		NVARCHAR(40)	NOT NULL,
-	[State]		NVARCHAR(40)	NOT NULL,
-	Country		NVARCHAR(40)	NOT NULL,
-	PostalCode	NVARCHAR(10)	NOT NULL,
-	Phone		NVARCHAR(24)	NOT NULL,
-	Fax			NVARCHAR(24)	NOT NULL,
-	Email		NVARCHAR(60)	NOT NULL,
+    EmployeeId  INT             NOT NULL,
+    LastName    NVARCHAR(20)    NOT NULL,
+    FirstName   NVARCHAR(20)    NOT NULL,
+    Title       NVARCHAR(30)    NOT NULL,
+    ReportsTo   INT             NULL,
+    BirthDate   DATE            NOT NULL,
+    HireDate    DATE            NOT NULL,
+    [Address]   NVARCHAR(70)    NOT NULL,
+    City        NVARCHAR(40)    NOT NULL,
+    [State]     NVARCHAR(40)    NOT NULL,
+    Country     NVARCHAR(40)    NOT NULL,
+    PostalCode  NVARCHAR(10)    NOT NULL,
+    Phone       NVARCHAR(24)    NOT NULL,
+    Fax         NVARCHAR(24)    NOT NULL,
+    Email       NVARCHAR(60)    NOT NULL,
 );
 
 -- insert data into Employee table
@@ -290,11 +290,11 @@ CREATE TABLE Employee_temp (
 BULK INSERT Employee_temp
 FROM ''' + @script_directory + 'Employee.csv''
 WITH (
-	FIELDTERMINATOR = '','',
+    FIELDTERMINATOR = '','',
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -302,12 +302,12 @@ WITH (
 -- correct data inconsistency in Phone and Fax
 
 UPDATE
-	Employee_temp
+    Employee_temp
 SET
-	Phone = CONCAT(''+'', Phone),
-	Fax = CONCAT(''+'', Fax)
+    Phone = CONCAT(''+'', Phone),
+    Fax = CONCAT(''+'', Fax)
 WHERE
-	EmployeeId = 5
+    EmployeeId = 5
 
 -- insert cleaned records into actual Employee table
 
@@ -325,19 +325,19 @@ DROP TABLE tempdb..Employee_temp;
 USE tempdb;
 
 CREATE TABLE Customer_temp (
-	CustomerId	INT,
-	FirstName	NVARCHAR(20),
-	LastName	NVARCHAR(20),
-	Company		NVARCHAR(80),
-	[Address]	NVARCHAR(70),
-	City		NVARCHAR(40),
-	[State]		NVARCHAR(40),
-	Country		NVARCHAR(40),
-	PostalCode	NVARCHAR(10),
-	Phone		NVARCHAR(24),
-	Fax			NVARCHAR(24),
-	Email		NVARCHAR(60),
-	SupportRepId	INT
+    CustomerId  INT,
+    FirstName   NVARCHAR(20),
+    LastName    NVARCHAR(20),
+    Company     NVARCHAR(80),
+    [Address]   NVARCHAR(70),
+    City        NVARCHAR(40),
+    [State]     NVARCHAR(40),
+    Country     NVARCHAR(40),
+    PostalCode  NVARCHAR(10),
+    Phone       NVARCHAR(24),
+    Fax         NVARCHAR(24),
+    Email       NVARCHAR(60),
+    SupportRepId    INT
 );
 
 
@@ -346,11 +346,11 @@ CREATE TABLE Customer_temp (
 BULK INSERT Customer_temp
 FROM ''' + @script_directory + 'Customer.csv''
 WITH (
-	FIELDTERMINATOR = ''|'',
+    FIELDTERMINATOR = ''|'',
     FORMAT = ''CSV'',
     FIELDQUOTE = ''"'',
     FIRSTROW = 2,
-	DATAFILETYPE = ''widechar'',
+    DATAFILETYPE = ''widechar'',
     ROWTERMINATOR = ''\n'',
     TABLOCK
 );
@@ -358,23 +358,23 @@ WITH (
 -- insert cleaned records into actual Customer table
 
 INSERT INTO
-	MusicStoreFYRE..Customer
+    MusicStoreFYRE..Customer
 SELECT
-	CustomerId,
-	FirstName,
-	LastName,
-	Company,
-	[Address],
-	City,
-	[State],
-	IIF(Country = ''USA'', ''United States'', Country) ''Country'',
-	PostalCode,
-	Phone,
-	Fax,
-	Email,
-	SupportRepId
+    CustomerId,
+    FirstName,
+    LastName,
+    Company,
+    [Address],
+    City,
+    [State],
+    IIF(Country = ''USA'', ''United States'', Country) ''Country'',
+    PostalCode,
+    Phone,
+    Fax,
+    Email,
+    SupportRepId
 FROM
-	tempdb..Customer_temp;
+    tempdb..Customer_temp;
 
 
 -- drop temporary Customer table

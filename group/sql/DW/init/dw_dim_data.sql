@@ -1,14 +1,14 @@
---	File Name:
+--  File Name:
 --      dw_dim_data.sql
 
 --  Run Order:
 --      Before: dw_fact_data.sql
 --      After:  dw_init.sql
 
---	Keywords:
+--  Keywords:
 --      Transfer Data, Dimension Tables
 
---	Description:
+--  Description:
 --      Transfer Data from MusicStoreFYRE to
 --      1)  MusicStoreDWFYRE..EmployeeDIM
 --      2)  MusicStoreDWFYRE..CustomerDIM
@@ -17,87 +17,87 @@
 
 -- EmployeeDIM
 INSERT INTO
-	MusicStoreDWFYRE..EmployeeDIM (
-		EmployeeKey,
-		FirstName,
-		LastName,
-		Title,
-		BirthDate,
-		HireDate
-	)
+    MusicStoreDWFYRE..EmployeeDIM (
+        EmployeeKey,
+        FirstName,
+        LastName,
+        Title,
+        BirthDate,
+        HireDate
+    )
 SELECT
-	EmployeeId,
-	FirstName,
-	LastName,
-	Title,
-	BirthDate,
-	HireDate
+    EmployeeId,
+    FirstName,
+    LastName,
+    Title,
+    BirthDate,
+    HireDate
 FROM
-	MusicStoreFYRE..Employee;
+    MusicStoreFYRE..Employee;
 GO
 
 -- CustomerDIM
 INSERT INTO
-	MusicStoreDWFYRE..CustomerDIM (
-		CustomerKey,
-		FirstName,
-		LastName,
-		Company,
-		[Address],
-		City,
-		[State],
-		Country,
-		PostalCode
-	)
+    MusicStoreDWFYRE..CustomerDIM (
+        CustomerKey,
+        FirstName,
+        LastName,
+        Company,
+        [Address],
+        City,
+        [State],
+        Country,
+        PostalCode
+    )
 SELECT
-	CustomerId,
-	FirstName,
-	LastName,
-	Company,
-	[Address],
-	City,
-	[State],
-	Country,
-	PostalCode
+    CustomerId,
+    FirstName,
+    LastName,
+    Company,
+    [Address],
+    City,
+    [State],
+    Country,
+    PostalCode
 FROM
-	MusicStoreFYRE..Customer;
+    MusicStoreFYRE..Customer;
 GO
 
 -- TrackDIM
 INSERT INTO
-	MusicStoreDWFYRE..TrackDIM (
-		TrackKey,
-		TrackName,
-		MediaType,
-		Genre,
-		Composer,
-		Duration_ms,
-		Size_bytes,
-		Album,
-		Artist
-	)
+    MusicStoreDWFYRE..TrackDIM (
+        TrackKey,
+        TrackName,
+        MediaType,
+        Genre,
+        Composer,
+        Duration_ms,
+        Size_bytes,
+        Album,
+        Artist
+    )
 SELECT
-	Tr.TrackId,
-	Tr.[Name],
-	M.[Name],
-	G.[Name],
-	Tr.Composer,
-	Tr.Milliseconds,
-	Tr.Bytes,
-	Al.Title,
-	Ar.[Name]
+    Tr.TrackId,
+    Tr.[Name],
+    M.[Name],
+    G.[Name],
+    Tr.Composer,
+    Tr.Milliseconds,
+    Tr.Bytes,
+    Al.Title,
+    Ar.[Name]
 FROM
-	MusicStoreFYRE..Track AS Tr,
-	MusicStoreFYRE..Genre AS G,
-	MusicStoreFYRE..MediaType AS M,
-	MusicStoreFYRE..Album AS Al,
-	MusicStoreFYRE..Artist AS Ar
+    MusicStoreFYRE..Track AS Tr,
+    MusicStoreFYRE..Genre AS G,
+    MusicStoreFYRE..MediaType AS M,
+    MusicStoreFYRE..Album AS Al,
+    MusicStoreFYRE..Artist AS Ar
 WHERE
-	Tr.GenreId = G.GenreId
-		AND
-	Tr.MediaTypeId = M.MediaTypeId
-		AND
-	Tr.AlbumId = Al.AlbumId
-		AND
-	Al.ArtistId = Ar.ArtistId;
+    Tr.GenreId = G.GenreId
+        AND
+    Tr.MediaTypeId = M.MediaTypeId
+        AND
+    Tr.AlbumId = Al.AlbumId
+        AND
+    Al.ArtistId = Ar.ArtistId;
 GO
