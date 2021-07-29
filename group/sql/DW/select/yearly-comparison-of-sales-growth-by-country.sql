@@ -59,7 +59,7 @@ DECLARE @custom_max_year SMALLINT = NULL;
 -- parameters --
 
 DECLARE @min_year CHAR(4) = CONVERT(CHAR(4), (SELECT ISNULL(@custom_min_year, MIN([Year])) FROM TimeDIM INNER JOIN MusicFact ON TimeDIM.DateKey = MusicFact.DateKey));
-DECLARE @max_year CHAR(4) = CONVERT(CHAR(4), (SELECT ISNULL(IIF(@custom_max_year > @custom_min_year, @custom_max_year, NULL), MAX([Year])) FROM TimeDIM));
+DECLARE @max_year CHAR(4) = CONVERT(CHAR(4), (SELECT ISNULL(IIF(@custom_max_year > @custom_min_year, @custom_max_year, NULL), MAX([Year])) FROM TimeDIM INNER JOIN MusicFact ON TimeDIM.DateKey = MusicFact.DateKey));
 
 EXEC ('
     SELECT

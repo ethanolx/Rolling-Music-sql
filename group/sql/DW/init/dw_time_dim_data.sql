@@ -16,7 +16,7 @@ USE MusicStoreDWFYRE;
 GO
 
 DECLARE @StartDate DATE = '20090101';   -- Start value of Date Range
-DECLARE @EndDate DATE = '20140101';     -- End Value of Date Range
+DECLARE @EndDate DATE = '20150101';     -- End Value of Date Range
 
 DECLARE @CurDate DATE;
 
@@ -25,13 +25,13 @@ WHILE @CurDate < @EndDate
 BEGIN
     INSERT INTO [TimeDIM]
     SELECT
-        CONVERT (CHAR(8),@CurDate,112) AS [DateKey], -- 8 digit date key (YYYYMMDD)
-        @CurDate AS [Date],                 -- Date
+        CONVERT (CHAR(8),@CurDate,112) AS [DateKey],    -- 8 digit date key (YYYYMMDD)
+        @CurDate AS [Date],                             -- Date
 
-        DATEPART(YEAR, @CurDate) AS [Year],         -- Get Year value of Date
-        DATEPART(QUARTER, @CurDate) AS [Quarter],   -- Get Quarter value of Date
-        DATEPART(MONTH, @CurDate) AS [Month],       -- Get Month value (i.e. 1 to 12)
-        FORMAT(@CurDate, 'MMM') AS [MonthName],     -- Get Month name (i.e. Jan, Feb)
+        DATEPART(YEAR, @CurDate) AS [Year],             -- Get Year value of Date
+        DATEPART(QUARTER, @CurDate) AS [Quarter],       -- Get Quarter value of Date
+        DATEPART(MONTH, @CurDate) AS [Month],           -- Get Month value (i.e. 1 to 12)
+        FORMAT(@CurDate, 'MMM') AS [MonthName],         -- Get Month name (i.e. Jan, Feb)
 
         -- Get number of the Week 1 to 7
         CASE DATEPART(WEEKDAY, @CurDate)

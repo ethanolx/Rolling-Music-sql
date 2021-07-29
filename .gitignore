@@ -1,2 +1,5 @@
 # Temporary Files
 tmp
+
+# Zip Files
+**/*.zip

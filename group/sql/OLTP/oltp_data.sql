@@ -21,12 +21,21 @@
 --      10) MusicStoreFYRE..Employee
 --      11) MusicStoreFYRE..Customer
 
+--  Parameter:
+--      @data_directory:
+--          Specify directory in which the data files reside
+--          Must be absolute file path
+--          Must end with a backslash ('C:\\...\')
+
 
 USE MusicStoreFYRE;
 GO
 
-DECLARE @script_directory VARCHAR(100);
-SET @script_directory = 'C:\\data\';
+DECLARE @data_directory VARCHAR(100);
+
+-- parameter --
+SET @data_directory = '...';
+-- parameter --
 
 DECLARE @sql VARCHAR(MAX) = '
 
@@ -34,7 +43,7 @@ DECLARE @sql VARCHAR(MAX) = '
 
 -- Invoice Table
 BULK INSERT Invoice
-FROM ''' + @script_directory + 'Invoice.csv''
+FROM ''' + @data_directory + 'Invoice.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
@@ -48,7 +57,7 @@ WITH
 
 -- Artist Table
 DECLARE @Artist NVARCHAR(MAX);
-SELECT @Artist = BULKCOLUMN FROM OPENROWSET(BULK ''' + @script_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
+SELECT @Artist = BULKCOLUMN FROM OPENROWSET(BULK ''' + @data_directory + 'Artist.json'', SINGLE_NCLOB) JSON;
 
 INSERT INTO Artist SELECT * FROM OPENJSON(@Artist, ''$'') WITH (
     ArtistId    INT             ''$.ArtistId'',
@@ -57,7 +66,7 @@ INSERT INTO Artist SELECT * FROM OPENJSON(@Artist, ''$'') WITH (
 
 -- Album Table
 BULK INSERT Album
-FROM ''' + @script_directory + 'Album.csv''
+FROM ''' + @data_directory + 'Album.csv''
 WITH
 (
     FIELDTERMINATOR = ''|'',
@@ -71,7 +80,7 @@ WITH
 
 -- MediaType Table
 BULK INSERT MediaType
-FROM ''' + @script_directory + 'MediaType.csv''
+FROM ''' + @data_directory + 'MediaType.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
@@ -85,7 +94,7 @@ WITH
 
 -- Genre Table
 DECLARE @Genre NVARCHAR(MAX);
-SELECT @Genre = BULKCOLUMN FROM OPENROWSET(BULK ''' + @script_directory + 'Genre.json'', SINGLE_NCLOB) JSON;
+SELECT @Genre = BULKCOLUMN FROM OPENROWSET(BULK ''' + @data_directory + 'Genre.json'', SINGLE_NCLOB) JSON;
 
 INSERT INTO Genre
 SELECT * FROM OPENJSON(@Genre, ''$'')
@@ -97,7 +106,7 @@ WITH (
 
 -- Track Table
 BULK INSERT Track
-FROM ''' + @script_directory + 'Track.csv''
+FROM ''' + @data_directory + 'Track.csv''
 WITH
 (
     FIELDTERMINATOR = ''|'',
@@ -111,7 +120,7 @@ WITH
 
 -- InvoiceLine Table
 BULK INSERT InvoiceLine
-FROM ''' + @script_directory + 'InvoiceLine.csv''
+FROM ''' + @data_directory + 'InvoiceLine.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
@@ -139,7 +148,7 @@ CREATE TABLE Playlist_temp (
 -- load data into temporary table
 
 BULK INSERT Playlist_temp
-FROM ''' + @script_directory + 'Playlist.csv''
+FROM ''' + @data_directory + 'Playlist.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
@@ -203,7 +212,7 @@ CREATE TABLE PlaylistTrack_temp (
 -- insert records into PlaylistTrack
 
 BULK INSERT PlaylistTrack_temp
-FROM ''' + @script_directory + 'PlaylistTrack.csv''
+FROM ''' + @data_directory + 'PlaylistTrack.csv''
 WITH
 (
     FIELDTERMINATOR = '','',
@@ -288,7 +297,7 @@ CREATE TABLE Employee_temp (
 -- insert data into Employee table
 
 BULK INSERT Employee_temp
-FROM ''' + @script_directory + 'Employee.csv''
+FROM ''' + @data_directory + 'Employee.csv''
 WITH (
     FIELDTERMINATOR = '','',
     FORMAT = ''CSV'',
@@ -344,7 +353,7 @@ CREATE TABLE Customer_temp (
 -- insert data into temporary Customer table
 
 BULK INSERT Customer_temp
-FROM ''' + @script_directory + 'Customer.csv''
+FROM ''' + @data_directory + 'Customer.csv''
 WITH (
     FIELDTERMINATOR = ''|'',
     FORMAT = ''CSV'',
