@@ -28,6 +28,7 @@ FYRE ---- data ---- Album.csv
       |         `-- Track.csv
       |
       |-- doc ---- documentation.docx
+      |        |-- dw-erd.png
       |        `-- presentation.pptx
       |
       |-- sql ---- DW ---- init ---- dw_dim_data.sql
