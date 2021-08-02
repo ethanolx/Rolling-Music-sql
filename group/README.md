@@ -62,37 +62,16 @@ FYRE ---- data ---- Album.csv
 2.  Run `sql/DW/init/dw_dim_data.sql` and `sql/DW/init/dw_time_dim_data.sql`
 3.  Run `sql/DW/init/dw_fact_data.sql`
 
-## Queries
+## Documentation
 
 For further detail, please refer to:
 1.  `doc/documentation.docx` for the full documentation, or
-2.  `doc/presentation.pptx` for the presentation slides
+2.  `doc/dw-erd.png` for the Data Warehouse schema, or
+3.  `doc/presentation.pptx` for the presentation slides
 
+## Queries
 
-### Query 1 - Year-on-Year Comparison of Sales by Quarter
-
-File Path:  `sql/DW/select/year-on-year-comparison-of-sales-by-quarter.sql`
-
-
-### Query 2 - Employee Performance by Customer Nationality
-
-File Path:  `sql/DW/select/employee-performance-by-customer-nationality.sql`
-
-
-### Query 3 - Yearly Comparison of Sales Growth by Country
-
-File Path:  `sql/DW/select/yearly-comparison-of-sales-growth-by-country.sql`
-
-
-### Query 4 - Sales Distributions by Genre and Quarter
-
-File Path:  `sql/DW/select/sales-distributions-by-genre-and-quarter.sql`
-
-
-### Query 5 - Best-Selling Artists for Most Popular Genres
-
-File Path:  `sql/DW/select/best-selling-artists-for-most-popular-genres.sql`
-
+The 5 insightful SELECT queries can be found in `sql/DW/select`.
 
 ## Credits
 

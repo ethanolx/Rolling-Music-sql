@@ -53,10 +53,10 @@ GO
 DROP FUNCTION IF EXISTS dbo.Get_Genre_By_Quarter;
 GO
 
-CREATE FUNCTION dbo.Get_Genre_By_Quarter(@quarter INT = 0) RETURNS VARCHAR(MAX) AS
+CREATE FUNCTION dbo.Get_Genre_By_Quarter(@quarter INT) RETURNS VARCHAR(MAX) AS
 BEGIN
-    DECLARE @filter_condition VARCHAR(50) = IIF(@quarter = 0, '', 'WHERE t.[Quarter] = ' + CAST(@quarter AS CHAR(1)));
-    DECLARE @label VARCHAR(20) = IIF(@quarter = 0, 'Total', 'Q' + CAST(@quarter AS CHAR(1)));
+    DECLARE @filter_condition VARCHAR(30) = 'WHERE t.[Quarter] = ' + CAST(@quarter AS CHAR(1));
+    DECLARE @label VARCHAR(20) = 'Q' + CAST(@quarter AS CHAR(1));
     RETURN
         'SELECT
             tr.Genre,
@@ -76,8 +76,9 @@ GO
 DROP FUNCTION IF EXISTS dbo.Get_Total_Quarters;
 GO
 
-CREATE FUNCTION dbo.Get_Total_Quarters(@quarter INT = 0) RETURNS VARCHAR(MAX) AS
+CREATE FUNCTION dbo.Get_Total_Quarters(@quarter INT) RETURNS VARCHAR(MAX) AS
 BEGIN
+    DECLARE @quarter_str CHAR(1) = CAST(@quarter AS CHAR(1));
     DECLARE @label VARCHAR(20) = 'Number of Q' + CAST(@quarter AS CHAR(1));
     RETURN
         'SELECT
@@ -87,8 +88,10 @@ BEGIN
                 [Year], [Quarter]
             FROM
                 TimeDIM t
+                    INNER JOIN
+                MusicFact m ON t.DateKey = m.DateKey
             WHERE
-                t.[Quarter] = 1
+                [Quarter] = ' + @quarter_str + '
             GROUP BY
                 [Year],
                 [Quarter]) tmp';
