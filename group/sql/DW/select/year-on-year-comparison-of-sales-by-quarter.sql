@@ -5,13 +5,25 @@
 --      Year-on-Year, By Quarter, Sales Comparison, Sales Growth
 
 --  Description:
---      --
+--      Compare each quarter's performance with the same quarter of the previous year
 
 --  Insights:
---      --
+--      In 2013, there was a fall in sales in quarters 1, 2 and 3, compared to 2012.
+--      The greatest drop in sales was in quarter 3.
+
+--      Nonetheless, sales improved from 2012 Q4 to 2013 Q4.
 
 --  Recommendations:
---      --
+--      Rolling Music Store should analyse their sales operations during the first 3 quarters of 2013 -
+--      especially in quarter 3 - to understand what resulted in the drop in sales.
+
+--      With their findings, they should take the necessary measures to increase sales in the under-performing quarters.
+
+--      They ought to take note of what went well in the 4th quarter of 2013 too.
+--      If any practices enhanced their sales during that time period, they should implement them in the future.
+
+--      For instance, if the sales growth in 2013 Q4 (from 2012 Q4) was due to a holiday sale,
+--      they should organise such events more often.
 
 --  Parameter:
 --      @custom_year:   Select the year for comparison (default is most recent year)

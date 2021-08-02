@@ -5,23 +5,29 @@
 --      Sales Distribution, Variation, Genre, Quarter
 
 --  Description:
---      --
+--      Analyse sales distributions over the 4 quarters of the year
+--      Analyse variability in the sales distributions
 
 --  Insights:
---      Classical, “Sci Fi & Fantasy” and “R&B/Soul” genres
---      have the highest variation across the 4 quarters.
---      Classical had the highest sales in the 2nd and 4th quarters.
+--      “Classical”, “Sci Fi & Fantasy” and “R&B/Soul” genres have the highest variation across the 4 quarters.
+
+--      “Classical” had the highest sales in the 2nd and 4th quarters.
+
 --      “Sci Fi & Fantasy” had the highest sales in the 2nd quarter.
+
 --      “R&B/Soul” had the highest sales in the 3rd quarter.
---      Latin, Rock and Soundtrack genres have the lowest variation across
---      the 4 quarters, which implies that the sales are more consistent.
+
+--      Latin, Rock and Soundtrack genres have the lowest variation across the 4 quarters,
+--      which implies that their sales are quite consistent.
 
 --  Recommendations:
---      Rolling Music Store should stock up on tracks from the
---          -   Classical and “Sci Fi & Fantasy” genres in the 2nd quarter
---          -   “R&B/Soul” genre in the 3rd quarter
---          -   Classical in the 4th quarter
---      To ensure that there will be sufficient stocks to reduce loss of sales due to out of stock.
+--      Rolling Music Store should stock up on records of the
+--          - “Classical” and “Sci Fi & Fantasy” genres in the 2nd quarter
+--          - “R&B/Soul” genre in the 3rd quarter
+--          - “Classical” in the 4th quarter
+--      To ensure sufficient inventory for sales.
+
+--      Jackson Sam should not anticipate any violent fluctuations in Latin, Rock and Soundtrack sales.
 
 --  Parameters:
 --      @prefix:        Customize prefix for each quarter's label (default is 'Proportion (Q')

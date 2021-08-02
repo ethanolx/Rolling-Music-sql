@@ -5,20 +5,20 @@
 --      Employee, Sales Performance, Local, Foreign
 
 --  Description:
---      --
+--      Compare each employee's performance by local and foreign sales,
+--      over the entirety of their careers.
 
 --  Insights:
 --      Overall, Jane Peacock is the top sales support agent.
---      She performs the best in selling music tracks to locals.
+--      Of the three salespersons, she has sold the most music tracks to local customers.
 
---      Conversely, Margaret Park performs the best in selling music tracks to foreigners.
+--      On the other hand, Margaret Park has sold the most music tracks to foreign customers.
 
 --  Recommendations:
---      Jane Peacock should be given a bonus to encourage
---      her to keep up her good sales performance.
+--      Jane Peacock should be given a bonus as a reward for her good sales performance.
 
---      If there are local customers, they should be assigned to Jane Peacock
---      while Margaret Park should handle foreign customers.
+--      If there are local customers, they should be assigned to Jane Peacock (local contact)
+--      while Margaret Park should handle foreign customers (foreign contact).
 
 
 USE MusicStoreDWFYRE;

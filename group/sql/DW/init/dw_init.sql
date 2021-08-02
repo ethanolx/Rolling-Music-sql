@@ -30,7 +30,8 @@ USE MusicStoreDWFYRE;
 GO
 
 CREATE TABLE CustomerDIM (
-    CustomerKey INT             NOT NULL,
+    CustomerKey INT             IDENTITY(1, 1),
+    OLTPKey     INT             NOT NULL,
     FirstName   NVARCHAR(20)    NOT NULL,
     LastName    NVARCHAR(20)    NOT NULL,
     Company     NVARCHAR(80)    NULL,
@@ -44,7 +45,8 @@ CREATE TABLE CustomerDIM (
 GO
 
 CREATE TABLE EmployeeDIM (
-    EmployeeKey INT             NOT NULL,
+    EmployeeKey INT             IDENTITY(1, 1),
+    OLTPKey     INT             NOT NULL,
     FirstName   NVARCHAR(20)    NOT NULL,
     LastName    NVARCHAR(20)    NOT NULL,
     Title       NVARCHAR(30)    NOT NULL,
@@ -55,7 +57,8 @@ CREATE TABLE EmployeeDIM (
 GO
 
 CREATE TABLE TrackDIM (
-    TrackKey        INT             NOT NULL,
+    TrackKey        INT             IDENTITY(1, 1),
+    OLTPKey         INT             NOT NULL,
     TrackName       NVARCHAR(160)   NOT NULL,
     MediaType       NVARCHAR(60)    NOT NULL,
     Genre           NVARCHAR(60)    NOT NULL,
@@ -82,13 +85,14 @@ CREATE TABLE TimeDIM (
 GO
 
 CREATE TABLE MusicFact (
-    CustomerKey INT NOT NULL,
-    EmployeeKey INT NOT NULL,
-    TrackKey    INT NOT NULL,
-    DateKey     INT NOT NULL,
-    Quantity    INT NOT NULL,
-    UnitPrice   DECIMAL(5, 2) NOT NULL,
-    PRIMARY KEY (CustomerKey, EmployeeKey, TrackKey, DateKey),
+    SurrogateKey    INT IDENTITY(1, 1),
+    CustomerKey     INT NOT NULL,
+    EmployeeKey     INT NOT NULL,
+    TrackKey        INT NOT NULL,
+    DateKey         INT NOT NULL,
+    Quantity        INT NOT NULL,
+    UnitPrice       DECIMAL(5, 2) NOT NULL,
+    PRIMARY KEY (SurrogateKey),
     FOREIGN KEY (CustomerKey) REFERENCES CustomerDIM (CustomerKey),
     FOREIGN KEY (EmployeeKey) REFERENCES EmployeeDIM (EmployeeKey),
     FOREIGN KEY (TrackKey) REFERENCES TrackDIM (TrackKey),

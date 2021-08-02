@@ -18,7 +18,7 @@
 -- EmployeeDIM
 INSERT INTO
     MusicStoreDWFYRE..EmployeeDIM (
-        EmployeeKey,
+        OLTPKey,
         FirstName,
         LastName,
         Title,
@@ -39,7 +39,7 @@ GO
 -- CustomerDIM
 INSERT INTO
     MusicStoreDWFYRE..CustomerDIM (
-        CustomerKey,
+        OLTPKey,
         FirstName,
         LastName,
         Company,
@@ -66,7 +66,7 @@ GO
 -- TrackDIM
 INSERT INTO
     MusicStoreDWFYRE..TrackDIM (
-        TrackKey,
+        OLTPKey,
         TrackName,
         MediaType,
         Genre,

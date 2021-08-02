@@ -5,25 +5,30 @@
 --      Country, Comparison by Year, Sales Growth
 
 --  Description:
---      --
+--      Compare annual sales growth by country
 
 --  Insights:
---      There is an increase in tracks sold to customers in Argentina and Canada.
---      While there is a decrease in tracks sold to
---      customers in the United States and Germany.
---      Out of the 4 countries, the majority of Rolling Music Store’s
---      business is done with customers from the United States.
+--      There is an increase in tracks sold to customers in Argentina and Canada,
+--      while there is a decrease in tracks sold to customers from the United States and Germany.
+
+--      Out of the above 4 countries, the majority of Rolling Music Store’s business
+--      is done with customers from the United States.
 
 --  Recommendations:
---      Rolling Music Store should collect feedback from their customers
---      in these 4 countries to understand their flaws and strengths.
---      To improve customer loyalty in Argentina and Canada,
---      they should offer a small gift, such as vouchers,
---      to customers and express their gratitude.
+--      Rolling Music Store should collect feedback from their customers in
+--      these 4 countries to understand their flaws and strengths.
 
---      For the United States and Germany, they should research on the
---      more popular artists in those countries, and investigate possible
---      causes for the drop in sales, such as overly-priced tracks.
+--      If sales growth in Argentina (for example) is consistent,
+--      Jackson Sam should consider setting up a local retail store in Argentina.
+
+--      He should perhaps give exclusive benefits to their United States customers,
+--      such as free shipping for deliveries.
+--      This rewards United States customers collectively for their high sales revenue
+--      and encourages sales growth, all while avoiding any potential bias among their customers.
+
+--      For the United States and Germany, they should research on the more
+--      popular artists/genres in those countries, and investigate possible causes
+--      for the drop in sales, such as unreasonable track pricing or lack of promotional reach.
 
 --  Parameters:
 --      @custom_min_year:   Select earlier year to compare against (default is earliest year)
@@ -101,3 +106,4 @@ EXEC ('
     ORDER BY
         [Growth] DESC
 ');
+GO

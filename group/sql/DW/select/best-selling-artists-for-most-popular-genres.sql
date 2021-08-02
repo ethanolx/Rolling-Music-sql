@@ -5,21 +5,21 @@
 --      Genre, Artist, Most Popular, Best-Selling
 
 --  Description:
---      Best Selling Artists (ties are possible)
---      for each of the top x and bottom y genres
---      in terms of variability across the years
+--      Best-Selling artists (ties are possible)
+--      for each of the best-selling genres
 
 --  Insights:
 --      Rock, Latin and Metal are the genres with the highest total sales.
---      Compared to Rock and Latin, the best selling artist for Metal, Metallica,
+
+--      Compared to Rock and Latin, the best-selling artist for Metal, Metallica,
 --      has the most significant contribution (34.47%) to the total sales for the Metal genre.
 
 --  Recommendations:
---      Rolling Music Store should organise a promotional event,
---      such as offering a 10-20% discount for songs or bundle sales
---      (Buy 2 get 1 free) that belong to these artists.
+--      Rolling Music Store should organise promotional events, such as
+--      discount sales (10-20% off) or bundle sales (buy-2-get-1-free) for songs made by these artists.
+
 --      This event would likely attract many customers into the store
---      as these are the most popular artists and genres.
+--      as these are the more popular artists and genres.
 
 --  Parameter:
 --      @top_genre_count:   Select how many genres to compare (default is 3)
