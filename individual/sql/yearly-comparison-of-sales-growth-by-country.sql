@@ -54,8 +54,8 @@ FROM
             WHERE
                 `Year` = max_year
             ) Latest_Sales ON Earliest_Sales.Country = Latest_Sales.Country
-        ) temp
-    ) temp
+        )
+    )
 WHERE
     `Asc Rank` <= 2 OR `Desc Rank` <= 2
 ORDER BY

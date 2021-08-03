@@ -56,9 +56,9 @@ WITH employee_performance AS (
             `Employee`,
             `Year`)
     WHERE
-        `Sales Rank` = 1
+        (`Sales Rank` = 1
             OR
-        `Consistency Rank` = 1
+        `Consistency Rank` = 1) AND `Mean Sales` >= 1000
 )
 
 SELECT
